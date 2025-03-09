@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import '@mysten/dapp-kit/dist/index.css';
+import Navbar from "@/components/navbar/navbar";
+import QueryClientProvider from "@/context/query-provider";
+import SuiProvider from "@/context/sui-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <QueryClientProvider>
+          <SuiProvider>
+              <div className="min-h-screen bg-gray-100 text-gray-100 dark:bg-gray-900 dark:text-gray-100">
+                <Navbar />
+                <div className="max-w-screen-xl m-auto pt-16">{children}</div>
+              </div>
+          </SuiProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
