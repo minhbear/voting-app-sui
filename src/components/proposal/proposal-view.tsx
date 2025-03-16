@@ -1,24 +1,46 @@
 "use client";
 
-const PROPOSAL_COUNT = 7;
-
-const ProposalItem = () => {
-  return (
-    <div className="p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-600 hover:border-blue-500 transition-colors">
-      <p className="text-xl font-semibold mb-2">Title: hello there</p>
-      <p className="text-gray-700 dark:text-gray-300">Desc: What is your vote ?</p>
-    </div>
-  );
-};
+import { useNetworkVariable } from "@/config/network-config";
+import { SuiID } from "@/types";
+import { useSuiClientQuery } from "@mysten/dapp-kit";
+import { SuiObjectData } from "@mysten/sui/client";
+import ProposalItem from "./proposal-item";
 
 const ProposalView = () => {
+  const dashboardId = useNetworkVariable("dashboardId");
+  const {
+    data: dataResponse,
+    isPending,
+    error,
+  } = useSuiClientQuery("getObject", {
+    id: dashboardId,
+    options: {
+      showContent: true,
+    },
+  });
+
+  if (isPending)
+    return <div className="text-center text-gray-500">Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error.message}</div>;
+  if (!dataResponse)
+    return <div className="text-center text-red-500">Not Found...</div>;
+
   return (
     <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {new Array(PROPOSAL_COUNT).fill(1).map((id) => (
-        <ProposalItem key={id * Math.random()} />
+      {getDashboardFields(dataResponse.data)?.proposal_ids.map((id) => (
+        <ProposalItem key={id} id={id} />
       ))}
     </div>
   );
 };
+
+function getDashboardFields(data: SuiObjectData | null | undefined) {
+  if (data?.content?.dataType !== "moveObject") return null;
+
+  return data.content.fields as {
+    id: SuiID;
+    proposal_ids: string[];
+  };
+}
 
 export default ProposalView;
