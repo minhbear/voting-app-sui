@@ -8,9 +8,10 @@ import { VoteModal } from "./vote-modal";
 
 interface ProposalItemProps {
   id: string;
+  hasVoted: boolean
 }
 
-const ProposalItem: FC<ProposalItemProps> = ({ id }) => {
+const ProposalItem: FC<ProposalItemProps> = ({ id, hasVoted }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     data: dataResponse,
@@ -80,10 +81,14 @@ const ProposalItem: FC<ProposalItemProps> = ({ id }) => {
         </div>
       </div>
       <VoteModal
+        hasVoted={hasVoted}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         proposal={proposal}
-        onVote={(voteYes: boolean) => console.log(voteYes)}
+        onVote={(voteYes: boolean) => {
+          console.log("🚀 ~ voteYes:", voteYes);
+          setIsModalOpen(false);
+        }}
       />
     </>
   );

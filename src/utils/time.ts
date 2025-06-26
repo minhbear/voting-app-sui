@@ -1,9 +1,9 @@
-export function formatUnixTimestamp(timestampSec: number) {
-  if (isUnixTimeExpired(timestampSec)) {
+export function formatUnixTimestamp(timestampMs: number) {
+  if (isUnixTimeExpired(timestampMs)) {
     return "Expired";
   }
 
-  const date = new Date(timestampSec * 1000);
+  const date = new Date(timestampMs);
 
   const formattedDate = date.toLocaleString("en-US", {
     month: "short",
@@ -16,6 +16,6 @@ export function formatUnixTimestamp(timestampSec: number) {
   return formattedDate;
 }
 
-export function isUnixTimeExpired(unixTimeSec: number) {
-  return new Date(unixTimeSec * 1000) < new Date();
+export function isUnixTimeExpired(unixTimeMs: number) {
+  return new Date(unixTimeMs) < new Date();
 }
